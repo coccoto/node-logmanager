@@ -1,2 +1,3 @@
-const LoggerManager = require('LoggerManager')
-exports.LoggerManager = LoggerManager
+import loggerManager from './LoggerManager'
+
+export const LoggerManager = loggerManager
