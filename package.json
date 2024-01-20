@@ -1,10 +1,13 @@
 {
   "name": "@coccoto/node-logmanager",
-  "version": "1.0.5",
+  "version": "1.5.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "release": "run-s clean build release:publish",
+    "clean": "rimraf dist",
+    "build": "tsc",
+    "release:publish": "npm publish"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +17,8 @@
   "dependencies": {
     "@types/node": "^20.11.5",
     "dotenv": "^16.3.2",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"

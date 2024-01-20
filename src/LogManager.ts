@@ -26,7 +26,7 @@ const transports = (): winston.transport[] => {
     }
 }
 
-const logger = (): Logger => winston.createLogger({
+const logManager = (): Logger => winston.createLogger({
     level: 'info',
     format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
@@ -37,4 +37,4 @@ const logger = (): Logger => winston.createLogger({
     transports: transports()
 })
 
-export const logManager = logger()
+export const logger = logManager()
