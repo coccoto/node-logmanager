@@ -25,7 +25,7 @@ const transports = (environment: Environment, logDir: string): winston.transport
     }
 }
 
-const LoggerManager = (environment: Environment, logDir: string): Logger => winston.createLogger({
+export const logManager = (environment: Environment, logDir: string): Logger => winston.createLogger({
     level: 'info',
     format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
@@ -35,5 +35,3 @@ const LoggerManager = (environment: Environment, logDir: string): Logger => wins
     ),
     transports: transports(environment, logDir)
 })
-
-export default LoggerManager

@@ -1,3 +1,3 @@
-import loggerManager from './LoggerManager'
+import { logManager } from './LogManager'
 
-export const LoggerManager = loggerManager
+export const LogManager = logManager
