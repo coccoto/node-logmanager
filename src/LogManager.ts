@@ -1,31 +1,32 @@
 import winston, { Logger, LogEntry } from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
+import dotenv from 'dotenv'
 
-type Environment = 'development' | 'production'
+dotenv.config()
 
-const transports = (environment: Environment, logDir: string): winston.transport[] => {
-    switch (environment) {
+const transports = (): winston.transport[] => {
+    switch (process.env['ENVIRONMENT']) {
         case 'development':
             return [
                 new winston.transports.Console(),
                 new DailyRotateFile({
-                    filename: logDir + '/%DATE%.log',
+                    filename: process.env['LOG_DIR'] + '/%DATE%.log',
                     datePattern: 'YYYY',
                 }),
             ]
         case 'production':
             return [
                 new DailyRotateFile({
-                    filename: logDir + '/%DATE%.log',
+                    filename: process.env['LOG_DIR'] + '/%DATE%.log',
                     datePattern: 'YYYY',
                 }),
             ]
         default:
-            throw new Error("[ERROR] Invalid environment. env['ENVIRONMENT']: " + environment)
+            throw new Error("[ERROR] Invalid environment. env['ENVIRONMENT']: " + process.env['ENVIRONMENT'])
     }
 }
 
-export const logManager = (environment: Environment, logDir: string): Logger => winston.createLogger({
+export const logManager = (): Logger => winston.createLogger({
     level: 'info',
     format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
@@ -33,5 +34,5 @@ export const logManager = (environment: Environment, logDir: string): Logger => 
             return JSON.stringify(info)
         }),
     ),
-    transports: transports(environment, logDir)
+    transports: transports()
 })
