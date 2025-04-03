@@ -1,2 +1,1 @@
-import { logger } from './LogManager'
-export { logger }
+export { initLogger, getLogger } from './LogManager'

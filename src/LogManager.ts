@@ -1,36 +1,39 @@
 import winston, { Logger } from 'winston'
 import DailyRotateFile from 'winston-daily-rotate-file'
-import dotenv from 'dotenv'
 
-dotenv.config()
+export type Environment = 'development' | 'production'
 
-const transports = (): winston.transport[] => {
+export type LogManagerConfig = {
+    environment: Environment
+    logDir: string
+}
+
+let loggerInstance: Logger | null = null
+
+export const initLogger = (config: LogManagerConfig) => {
     const dailyRotateFile = new DailyRotateFile({
-        filename: process.env['LOG_DIR'] + '/%DATE%.log',
+        filename: config.logDir + '/%DATE%.log',
         datePattern: 'YYYY-MM-DD',
         maxFiles: '180',
     })
-    if (process.env['ENVIRONMENT'] === 'development') {
-        return [
-            new winston.transports.Console(),
-            dailyRotateFile,
-        ]
-    } else if (process.env['ENVIRONMENT'] === 'production') {
-        return [
-            dailyRotateFile,
-        ]
-    } else {
-        throw new Error("[ERROR] Invalid environment. env['ENVIRONMENT']: " + process.env['ENVIRONMENT'])
-    }
+    const transports: winston.transport[] = config.environment === 'development'
+        ? [new winston.transports.Console(), dailyRotateFile]
+        : [dailyRotateFile]
+
+    loggerInstance = winston.createLogger({
+        level: 'info',
+        format: winston.format.combine(
+            winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
+            winston.format.json()
+        ),
+        transports,
+    })
 }
 
-const logManager = (): Logger => winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-        winston.format.json(),
-    ),
-    transports: transports()
-})
+export const getLogger = (): Logger => {
+    if (! loggerInstance) {
+        throw new Error("Logger not initialized. Call initLogger() first.")
+    }
+    return loggerInstance
+}
 
-export const logger = logManager()
